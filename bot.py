@@ -11,19 +11,20 @@ from slackclient import SlackClient
 
 class IrcBot(ircbot.SingleServerIRCBot):
     def __init__(self):
-        """
-        Constructeur qui pourrait prendre des paramètres dans un "vrai" programme.
-        """
         print("connecting to irc")
-        ircbot.SingleServerIRCBot.__init__(self, [("irc.iiens.net", 6667)],
-                                           "relai-slack", "Bot qui relaie les message postés sur slack")
+        ircbot.SingleServerIRCBot.__init__(
+            self,
+            [("irc.iiens.net", 6667)],
+            "b",
+            "Bot qui relaie les message postés sur slack")
         print("connected to irc")
 
     def on_welcome(self, serv, ev):
         """
-        Méthode appelée une fois connecté et identifié.
-        Notez qu'on ne peut rejoindre les canaux auparavant.
+        Method that is called once we're connected and identified.
+        Note that you can join channel before that.
         """
+        self.serv = serv
         print("joining chan")
         serv.join("#test-ircbot")
         print("joined chan")
@@ -46,15 +47,21 @@ class IrcBot(ircbot.SingleServerIRCBot):
         client.api_call( "chat.postMessage",
                    channel="#bot-testing",
                    text=message,
-                   username=auteur,
+                   username="(IRC)" + auteur,
                    icon_emoji=':robot_face:'
         )
 
         #this used to send a msg on the irc channel
         #serv.privmsg(canal, "Bonjour " + auteur)
 
+    def post_irc_msg_as(self, msg, author):
+        print("posting to irc")
+        self.serv.privmsg("#test-ircbot", "<(SLACK)" + author + "> " + msg) 
+
 def start_irc_bot():
-    IrcBot().start()
+    global my_irc_bot        #needed to change global variable
+    my_irc_bot = IrcBot()
+    my_irc_bot.start()
 
 # PROGRAM STARTS HERE ========================================================
 print("Initiating slackclient")
@@ -70,6 +77,7 @@ client.api_call( "chat.postMessage",
         )
 
 print("starting irc bot in a thread")
+my_irc_bot = 0  #creates global variable that will hold the instance of IrcBot
 threading.Thread(target=start_irc_bot).start()
 
 print("Launching main loop for slack")
@@ -78,20 +86,23 @@ if client.rtm_connect():
     while True:
         print("reading slack messages?")
         last_read = client.rtm_read()
+        msg = ""
         if last_read:
             try:
                 msg = last_read[0]['text']
                 #reply to channel message was found in.
                 channel = last_read[0]['channel']
-                
-                print("(SLACK) " + "?????" + " : " + msg)
-                print("we still need to send it to irc")
-            except:
-                print("No slack messages...");
+            except Exception, e:
+                print("Not a message");
                 pass
+
+            if msg != "":
+                print("(SLACK) " + "?????" + " : " + msg)
+                my_irc_bot.post_irc_msg_as(msg, "?????")
+                print("message transféré")
         else :
-            print("last_read evaluates to false...")
-            print(last_read)
+            print("No message")
+            
         time.sleep(2)
 else:
     print("There was a problem starting the real time messaging system for slack")
