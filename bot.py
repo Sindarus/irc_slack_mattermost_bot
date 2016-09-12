@@ -4,6 +4,20 @@
 import irclib
 import ircbot
 
+from slackclient import SlackClient
+
+print("STARTING SLACK BOT STUFF")
+token = "xoxb-78808818897-Hw70mg5wQuADBJUJJvxO8CFy"
+sc = SlackClient(token)
+print sc.api_call("api.test")
+print sc.api_call( "chat.postMessage",
+                   channel="#bot-testing",
+                   text="Grrr, pseudos, grrr, moche mail, grrr, chocolat, grrr",
+                   username='ElTata',
+                   icon_emoji=':robot_face:'
+)
+print("ENDING SLACK BOT STUFF")
+
 class BotBonjour(ircbot.SingleServerIRCBot):
     def __init__(self):
         """
@@ -43,6 +57,6 @@ class BotBonjour(ircbot.SingleServerIRCBot):
             serv.privmsg(canal, "Bonjour " + auteur)
     
 
-print("START");
-BotBonjour().start()
-print("STOP")
+#print("START");
+#BotBonjour().start()
+#print("STOP")
