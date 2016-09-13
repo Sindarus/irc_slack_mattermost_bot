@@ -1,116 +1,31 @@
 #!/usr/bin/env python2
 # -*- coding: utf8 -*-
 
+# In this simple script, there are two global variables : my_ircbot
+# and my_slackbot, that are instances of IrcBot and SlackBot.
+# Each of the bot needs to be callable from any other bot, so I thought this
+# would be simpler than sending each bots references to each other bot.
+# Each bot runs in a separate thread.
+
 import threading
-import time
 
-import irclib
-import ircbot
-
-from slackclient import SlackClient
-
-class IrcBot(ircbot.SingleServerIRCBot):
-    def __init__(self):
-        print("connecting to irc")
-        ircbot.SingleServerIRCBot.__init__(
-            self,
-            [("irc.iiens.net", 6667)],
-            "b",
-            "Bot qui relaie les message postés sur slack")
-        print("connected to irc")
-
-    def on_welcome(self, serv, ev):
-        """
-        Method that is called once we're connected and identified.
-        Note that you can join channel before that.
-        """
-        self.serv = serv
-        print("joining chan")
-        serv.join("#test-ircbot")
-        print("joined chan")
-        serv.privmsg("#test-ircbot", "Bonjour tout le monde, je suis un bot qui retransmet ici les messages postés sur slack, et qui retransmet sur slack les messages postés ici.")
-
-    def on_pubmsg(self, serv, ev):
-        """
-        Méthode appelée à la réception d'un message sur irc.
-        """
-
-        # Il n'est pas indispensable de passer par des variables
-        # Ici elles permettent de clarifier le tout.
-        auteur = irclib.nm_to_n(ev.source())
-        canal = ev.target()
-        message = ev.arguments()[0].lower()
-
-        print("( IRC ) " + auteur + " : " + message)
-
-        #sending msg to slack
-        client.api_call( "chat.postMessage",
-                   channel="#bot-testing",
-                   text=message,
-                   username="(IRC)" + auteur,
-                   icon_emoji=':robot_face:'
-        )
-
-        #this used to send a msg on the irc channel
-        #serv.privmsg(canal, "Bonjour " + auteur)
-
-    def post_irc_msg_as(self, msg, author):
-        print("posting to irc")
-        self.serv.privmsg("#test-ircbot", "<(SLACK)" + author + "> " + msg) 
-
-def start_irc_bot():
-    global my_irc_bot        #needed to change global variable
-    my_irc_bot = IrcBot()
-    my_irc_bot.start()
+import config as c
 
 # PROGRAM STARTS HERE ========================================================
-print("Initiating slackclient")
-token = "xoxb-78808818897-Hw70mg5wQuADBJUJJvxO8CFy"
-client = SlackClient(token)
-print("Slackclient initiated")
+def start_ircbot():
+    global my_ircbot        #needed to retrieve my_ircbot global variable
+    my_ircbot.start()
 
-client.api_call( "chat.postMessage",
-                   channel="#bot-testing",
-                   text="Bonjour tout le monde, je suis un bot qui retransmet ici les messages postés sur irc, et qui retransmet sur irc les messages postés ici.",
-                   username="relai-irc",
-                   icon_emoji=':robot_face:'
-        )
+def start_slackbot():
+    global my_slackbot        #needed to retrieve my_slackbot global variable
+    my_slackbot.start()
 
-print("starting irc bot in a thread")
-my_irc_bot = 0  #creates global variable that will hold the instance of IrcBot
-threading.Thread(target=start_irc_bot).start()
-
-print("Launching main loop for slack")
-if client.rtm_connect():
-    print("Successfully started real time messaging system for slack")
-    while True:
-        print("reading slack messages?")
-        last_read = client.rtm_read()
-        msg = ""
-        if last_read:
-            try:
-                msg = last_read[0]['text']
-                #reply to channel message was found in.
-                channel = last_read[0]['channel']
-            except Exception, e:
-                print("Not a message");
-                pass
-
-            if msg != "":
-                print("(SLACK) " + "?????" + " : " + msg)
-                my_irc_bot.post_irc_msg_as(msg, "?????")
-                print("message transféré")
-        else :
-            print("No message")
-            
-        time.sleep(2)
-else:
-    print("There was a problem starting the real time messaging system for slack")
+#creates global variables that will hold the instances of bots
+my_ircbot = IrcBot()
+my_slackbot = SlackBot()
 
 
-
-
-
-
-
-
+print("starting ircbot in a thread")
+threading.Thread(target=start_ircbot).start()
+print("starting slackbot in a thread")
+threading.Thread(target=start_slackbot).start()
