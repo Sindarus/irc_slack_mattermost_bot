@@ -34,8 +34,6 @@ class IrcBot(ircbot.SingleServerIRCBot):
         self.serv = serv
 
         print("IRCBOT: joining chans")
-        print("lol table : ")
-        print(central_unit.twinnings)
         for cur_twinning in central_unit.twinnings.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":

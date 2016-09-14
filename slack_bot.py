@@ -3,6 +3,7 @@
 
 import time
 import json
+import re
 import unicodedata
 from slackclient import SlackClient
 
@@ -95,7 +96,6 @@ class SlackBot:
             # reading websocket
             print("SLACKBOT: reading slack messages")
             last_read = self.client.rtm_read()
-            print last_read
 
             if not last_read:
                 print("No message")
@@ -125,6 +125,8 @@ class SlackBot:
             channel = channel.encode("utf-8")
             user = user.encode('utf8')
 
+            msg = self.replace_user_id_in_msg(msg).encode('utf8')
+
             # transfering to central unit
             print("(SLACK " + channel + ") " + user + " : " + msg)
             central_unit.handle_msg(Message(
@@ -132,6 +134,24 @@ class SlackBot:
                 author = user,
                 msg = msg)
             )
+
+    def replace_user_id_in_msg(self, msg):
+        """when a message is posted on slack and it references another user,
+        the user's name is replaced by its ID. Pass the message through this
+        function to get the name back"""
+
+        #posting @name on slack would be replaced by, for example:
+        #<@UAAAAAAAA>
+
+        while(True):
+            res = re.search("<@(U[0-9A-Z]{8})>", msg)
+            if type(res).__name__ == 'NoneType':    # if there's no match
+                return msg
+            else:
+                cur_name = self.user_name(res.group(1))
+                msg = msg.replace(res.group(), "@" + cur_name)
+
+        return msg
 
     def post_msg(self, chan_name, msg):
         #sending msg to slack
