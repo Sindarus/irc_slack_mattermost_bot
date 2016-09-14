@@ -18,7 +18,8 @@ class SlackBot:
         self.client = SlackClient(c.SLACKBOT_TOKEN)
         print("SLACKBOT: Slackclient initiated")
 
-        self.send_welcome_msg()
+        if c.WELCOME_MESSAGES:
+            self.send_welcome_msg()
 
     def send_welcome_msg(self):
         print("SLACKBOT: Sending welcome msg")
@@ -26,7 +27,7 @@ class SlackBot:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "Slack":
                     self.client.api_call( "chat.postMessage",
-                        channel="#bot-testing",
+                        channel=cur_chan.chan_name,
                         text="(Init) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__(),
                         username="relai-irc",
                         icon_emoji=':robot_face:'
@@ -114,7 +115,7 @@ class SlackBot:
                 else :
                     print("No message")
 
-                time.sleep(2)
+                time.sleep(c.SLACKBOT_REFRESH_TIME)
         else:
             print("SLACKBOT: There was a problem starting the real time messaging system for slack.")
             exit()

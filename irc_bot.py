@@ -26,7 +26,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
 
     def on_welcome(self, serv, ev):
         """
-        Method that is called once we're connected and identified.
+            Method that is called once we're connected and identified.
         Note that you can join channel before that.
         """
         self.serv = serv    #this is used to interact with the server
@@ -41,7 +41,8 @@ class IrcBot(ircbot.SingleServerIRCBot):
                     self.serv.join(cur_chan.chan_name)
         print("IRCBOT: joined chans")
 
-        self.send_welcome_msg()
+        if c.WELCOME_MESSAGES:
+            self.send_welcome_msg()
 
     def on_pubmsg(self, serv, ev):
         """
