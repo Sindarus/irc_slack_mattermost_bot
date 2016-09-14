@@ -10,9 +10,6 @@ import central_unit
 from message import *
 from chan import *
 
-from global_variables import * #needed to make the irc_bot connect
-                               #to every chan needed
-
 class IrcBot(ircbot.SingleServerIRCBot):
     """
     Bot that runs in a separate thread, that deals with irc interaction
