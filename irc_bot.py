@@ -16,20 +16,22 @@ from global_variables import * #needed to make the irc_bot connect
 class IrcBot(ircbot.SingleServerIRCBot):
     def __init__(self):
         print("IRCBOT: Connecting to irc")
+        self.connected = False
         ircbot.SingleServerIRCBot.__init__(
             self,
             [(c.IRC_SERVER, c.IRC_PORT)],
             c.IRCBOT_NAME,
             c.IRCBOT_LONG_NAME
         )
-        print("IRCBOT: connected to irc")
 
     def on_welcome(self, serv, ev):
         """
-            Method that is called once we're connected and identified.
+        Method that is called once we're connected and identified.
         Note that you can join channel before that.
         """
-        self.serv = serv    #this is used to interact with the server
+        print("IRCBOT: connected to irc")
+        self.connected = True
+        self.serv = serv
 
         print("IRCBOT: joining chans")
         print("lol table : ")
@@ -74,6 +76,10 @@ class IrcBot(ircbot.SingleServerIRCBot):
         """posts `msg` to `chan_name` on IRC"""
         assert isinstance(chan_name, str), "chan_name has to be a string"
         assert isinstance(msg, Message), "msg has to be a msg"
+
+        if not self.connected:
+            print("WARNING : the ircbot was requested to post a message, but it is not connected yet !")
+            return
 
         print("IRCBOT: posting to irc")
         self.serv.privmsg(

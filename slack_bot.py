@@ -76,49 +76,62 @@ class SlackBot:
         return ret
 
     def start(self):
+        # retrieve chan names and user names needed to replace chan and user IDs
         self.retrieve_chan_names()
         self.retrieve_user_names()
 
-        print("SLACKBOT: Launching main loop for slack")
-        if self.client.rtm_connect():
-            print("SLACKBOT: Successfully started real time messaging system for slack")
-            while True:
-                print("SLACKBOT: reading slack messages?")
-                last_read = self.client.rtm_read()
-                msg = ""
-                if last_read:
-                    try:
-                        msg = last_read[0]['text']
-                        #convert msg from unicode to string
-                        msg = unicodedata.normalize('NFKD', msg).encode('ascii','ignore')
-
-                        channel = last_read[0]['channel']
-                        #gets the real name, not the id
-                        channel = self.chan_name(channel)
-
-                        user = last_read[0]['user']
-                        #gets the real name, not the id
-                        user = self.user_name(user)
-                        #converts user from unicode to string
-                        user = unicodedata.normalize('NFKD', user).encode('ascii','ignore')
-
-                        if msg != "":
-                            print("(SLACK " + channel + ") " + user + " : " + msg)
-                            central_unit.handle_msg(Message(
-                                chan_orig = Chan("Slack", channel),
-                                author = user,
-                                msg = msg)
-                            )
-                    except Exception, e:
-                        print("Not a message");
-                        pass
-                else :
-                    print("No message")
-
-                time.sleep(c.SLACKBOT_REFRESH_TIME)
-        else:
+        # initiating websocket connection to slack
+        if not self.client.rtm_connect():
             print("SLACKBOT: There was a problem starting the real time messaging system for slack.")
             exit()
+        else:
+            print("SLACKBOT: Successfully started real time messaging system for slack")
+
+        # main loop
+        print("SLACKBOT: Launching main loop for slack")
+        while True:
+            time.sleep(c.SLACKBOT_REFRESH_TIME)
+
+            # reading websocket
+            print("SLACKBOT: reading slack messages")
+            last_read = self.client.rtm_read()
+            print last_read
+
+            if not last_read:
+                print("No message")
+                continue
+
+            # trying to harvest a message from what we've read from websocker
+            msg = ""
+            try:
+                msg = last_read[0]['text']
+                channel = last_read[0]['channel']
+                user = last_read[0]['user']
+            except Exception, e:
+                print("Not a message because : " + e.__repr__());
+                continue
+
+            if msg == "":
+                print("empty message")
+                continue
+
+            #retrieve real names, not IDs
+            channel = self.chan_name(channel)
+            user = self.user_name(user)
+
+            #encoding everything to utf8, so that it's compatible with the rest
+            #msg = unicodedata.normalize('NFKD', msg).encode('Latin-1', 'ignore')
+            msg = msg.encode("utf-8")
+            channel = channel.encode("utf-8")
+            user = user.encode('utf8')
+
+            # transfering to central unit
+            print("(SLACK " + channel + ") " + user + " : " + msg)
+            central_unit.handle_msg(Message(
+                chan_orig = Chan("Slack", channel),
+                author = user,
+                msg = msg)
+            )
 
     def post_msg(self, chan_name, msg):
         #sending msg to slack

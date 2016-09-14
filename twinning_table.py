@@ -29,7 +29,8 @@ class TwinningTable:
                     ret = deepcopy(cur_twinning)
                     ret.pop(i)
                     return ret
-        raise Exception("This chan has no twins !")
+
+        return []   # if we couldn't find the chan in the twinning table
 
     def __repr__(self):
         return self.table.__repr__()
