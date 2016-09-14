@@ -2,10 +2,10 @@
 # -*- coding: utf8 -*-
 
 class Chan:
-    # A chan in a chat system.
-    # For example : #strasbourg on IRC
-    # or : #general on Slack
-    # In this program, a Chan is specific to a server and a chat type !!
+    """Class to abstract a chan in a chat system.
+    For example : #strasbourg on IRC
+    or : #general on Slack
+    In this program, a Chan is specific to a server and a chat type !!"""
 
     def __init__(self, chat_type, chan_name):
         assert chat_type in ["IRC", "Slack", "MM"], "Unknown chat type"

@@ -16,12 +16,18 @@ from slack_bot import *
 #can be accessed with central_unit.variable
 
 def handle_msg(msg):
+    """This is the 'centralunit' : This function is called by the bots monitoring
+    IRC, Slack or MM when they receive a message. This function then looks for
+    the chans that the message need to be sent on (chans that are twins of the
+    chan from which the message comes), and then calls the right bots
+    so that the messages are sent on every chan twins"""
+
     assert isinstance(msg, Message), "msg has to be a Message object"
 
     print("handling msg : " + msg.__repr__())
-    chans_to_send = twinnings.get_chan_twins(msg.chan_orig)
+    twins = twinnings.get_chan_twins(msg.chan_orig)
 
-    for cur_chan in chans_to_send:
+    for cur_chan in twins:
         if cur_chan.chat_type == "IRC":
             my_ircbot.post_msg(cur_chan.chan_name, msg)
         elif cur_chan.chat_type == "Slack":
@@ -30,6 +36,9 @@ def handle_msg(msg):
             print("While handling a message : Unknown chat type")
 
 def start():
+    """starts the whole system by retrieving config.py options, creating
+    the bots and launching them in a separate thread"""
+
     #needed to change global variables
     global twinnings
     global my_ircbot

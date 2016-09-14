@@ -14,15 +14,24 @@ from message import *
 from chan import *
 
 class SlackBot:
+    """
+    Bot that runs in a separate thread, that deals with slack interaction
+    """
+
     def __init__(self):
         print("SLACKBOT: Initiating slackclient")
         self.client = SlackClient(c.SLACKBOT_TOKEN)
-        print("SLACKBOT: Slackclient initiated")
 
         if c.WELCOME_MESSAGES:
             self.send_welcome_msg()
 
     def send_welcome_msg(self):
+        """
+        Sends a welcome message on every channel that is twinned with another
+        one. The message tells with what other channels the said channel is
+        twinned with.
+        """
+
         print("SLACKBOT: Sending welcome msg")
         for cur_twinning in central_unit.twinnings.table:
             for cur_chan in cur_twinning:
@@ -35,6 +44,11 @@ class SlackBot:
                     )
 
     def retrieve_chan_names(self):
+        """Asks slack's API to retrieve the name of every chan. Since channels
+        are usually refered to by their slack id. This function
+        builds the property `char_name` which is a dictionnary whose keys are
+        channel IDs, and whose values are corresponding names"""
+
         print("SLACKBOT: retrieving channel names")
         self.chan_names = {}
         data = self.client.api_call("channels.list")
@@ -43,6 +57,7 @@ class SlackBot:
 
     def chan_name(self, id):
         """Given a slack channel id, this function returns the name of the channel"""
+
         try:
             ret = self.chan_names[id]
         except Exception as e:  #if chan_names[id] is unknown
@@ -56,6 +71,8 @@ class SlackBot:
         return ret
 
     def retrieve_user_names(self):
+        """same as retrieve_chan_names, but for user names"""
+
         print("SLACKBOT: retrieving user names")
         self.user_names = {}
         data = self.client.api_call("users.list")
@@ -64,6 +81,7 @@ class SlackBot:
 
     def user_name(self, id):
         """Given a slack user id, this function returns the name of the user"""
+
         try:
             ret = self.user_names[id]
         except Exception as e:  #if user_names[id] is unknown
@@ -76,17 +94,25 @@ class SlackBot:
                 ret = id #fallback: keep id as name
         return ret
 
-    def start(self):
-        # retrieve chan names and user names needed to replace chan and user IDs
-        self.retrieve_chan_names()
-        self.retrieve_user_names()
-
-        # initiating websocket connection to slack
+    def initiate_rtm_api(self):
+        """initiating websocket connection to slack"""
         if not self.client.rtm_connect():
             print("SLACKBOT: There was a problem starting the real time messaging system for slack.")
             exit()
         else:
             print("SLACKBOT: Successfully started real time messaging system for slack")
+
+    def start(self):
+        """
+        Starts the bot so that it begins monitoring slack activity, and transmitting
+        received messages to the central unit as Messages objects.
+        """
+
+        # retrieve chan names and user names needed to replace chan and user IDs
+        self.retrieve_chan_names()
+        self.retrieve_user_names()
+
+        self.initiate_rtm_api()
 
         # main loop
         print("SLACKBOT: Launching main loop for slack")
@@ -96,7 +122,6 @@ class SlackBot:
             # reading websocket
             print("SLACKBOT: reading slack messages")
             last_read = self.client.rtm_read()
-
             if not last_read:
                 print("No message")
                 continue
@@ -154,7 +179,11 @@ class SlackBot:
         return msg
 
     def post_msg(self, chan_name, msg):
-        #sending msg to slack
+        """Posts a message on the channel `chan_name` on slack. This function
+        handles formatting the message to make it look like the author of the
+        message posted it."""
+
+        assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(msg).__name__
         self.client.api_call(
             "chat.postMessage",
             channel=chan_name,

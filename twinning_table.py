@@ -6,7 +6,7 @@ from copy import *
 from chan import *
 
 class TwinningTable:
-    #singleton class that stores what chans to link with eachother
+    """singleton class that stores what chans to link with eachother"""
 
     def __init__(self, table):
         self.table = table
@@ -20,7 +20,8 @@ class TwinningTable:
                 assert len(self.get_chan_twins(cur_chan)) > 0, "a twinning should contain at least two chans"
 
     def get_chan_twins(self, chan):
-        #returns a list of chans that are twins of `chan`
+        """Returns a list of chans that are twins of `chan`."""
+
         assert isinstance(chan, Chan), "The chan argument should be a Chan object"
 
         for cur_twinning in self.table:

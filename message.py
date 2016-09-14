@@ -4,6 +4,11 @@
 from chan import *
 
 class Message:
+    """
+    Simple class to abstract a message that has an chan of origin, an author
+    and a content (msg).
+    """
+
     def __init__(self, chan_orig, author, msg):
         assert isinstance(chan_orig, Chan), "chan_orig has to be a Chan object"
         assert isinstance(author, str), "author has to be a string object"
