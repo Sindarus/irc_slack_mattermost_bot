@@ -8,7 +8,9 @@ class Chan:
     In this program, a Chan is specific to a server and a chat type !!"""
 
     def __init__(self, chat_type, chan_name):
-        assert chat_type in ["IRC", "Slack", "MM"], "Unknown chat type"
+	assert isinstance(chat_type, str), "chat_type should be a str, was a " + type(chat_type).__name__
+	assert isinstance(chan_name, str), "chan_name should be a str, was a " + type(chan_name).__name__
+        assert chat_type in ["IRC", "Slack", "MM"], "Unknown chat type " + chat_type
         self.chat_type = chat_type
         self.chan_name = chan_name
 

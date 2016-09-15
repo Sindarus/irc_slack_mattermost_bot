@@ -146,11 +146,11 @@ class SlackBot:
 
             #encoding everything to utf8, so that it's compatible with the rest
             #msg = unicodedata.normalize('NFKD', msg).encode('Latin-1', 'ignore')
-            msg = msg.encode("utf-8")
             channel = channel.encode("utf-8")
             user = user.encode('utf8')
 
-            msg = self.replace_user_id_in_msg(msg).encode('utf8')
+            msg = self.replace_user_id_in_msg(msg)
+	    msg = msg.encode('utf-8')
 
             # transfering to central unit
             print("(SLACK " + channel + ") " + user + " : " + msg)

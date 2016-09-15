@@ -36,9 +36,9 @@ class hello:
 
         print("MMBOT: transfering message to central_unit")
         central_unit.handle_msg(Message(
-            chan_orig=Chan("MM", input.channel_name),
-            author=input.user_name,
-            msg=input.text)
+            chan_orig=Chan("MM", channel_name.encode("utf-8")),
+            author=user_name.encode("utf-8"),
+            msg=text.encode("utf-8"))
         )
 
 def start():
