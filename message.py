@@ -10,8 +10,8 @@ class Message:
     """
 
     def __init__(self, chan_orig, author, msg):
-        assert isinstance(chan_orig, Chan), "chan_orig has to be a Chan object"
-        assert isinstance(author, str), "author has to be a string object"
+        assert isinstance(chan_orig, Chan), "chan_orig has to be a Chan object, was a " + type(chan_orig).__name__
+        assert isinstance(author, str), "author has to be a string object, was a " + type(author).__name__
         assert isinstance(msg, str), "Msg has to be a string object, was a " + type(msg).__name__
 
         self.chan_orig = chan_orig
