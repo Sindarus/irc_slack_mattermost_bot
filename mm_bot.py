@@ -22,7 +22,7 @@ class hello:
     def POST(self):
         print("MMBOT: received a post request")
         input = web.input()
-        if(input.token != c.MMBOT_OUTHOOK_TOKEN):
+        if(input.token not in c.MMBOT_OUTHOOK_TOKEN):
             print("WARNING: MMBOT received a post request but the token was wrong. Ignoring request.")
             return
 
