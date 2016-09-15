@@ -63,5 +63,5 @@ def start():
     threading.Thread(target=my_ircbot.start).start()
     print("starting slackbot in a thread")
     threading.Thread(target=my_slackbot.start).start()
-    print("startin mmbot in a thread")
+    print("starting mmbot in a thread")
     threading.Thread(target=mm_bot.start())

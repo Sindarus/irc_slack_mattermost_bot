@@ -4,13 +4,19 @@
 import web
 import urllib2  # to send get requests
 
-import config
+import config as c
 import central_unit
+from message import *
 
 urls = (
-    '/handle_msg', 'hello'
+    '/handle_msg', 'hello',
+    '/test', 'bonjour'
 )
 app = web.application(urls, globals())
+
+class bonjour:
+    def GET(self):
+	return "This is a test page to see if the webserver is reachable."
 
 class hello:
     def POST(self):
@@ -24,8 +30,8 @@ class hello:
             print("MMBOT: transfering message to central_unit")
             central_unit.handle_msg(Message(
                 chan_orig=Chan("MM", input.channel_name),
-                author=input.user_name,
-                msg=input.text)
+                author=input.user_name.encode("utf-8"),
+                msg=input.text.encode("utf-8"))
             )
         except Exception, e:
             print("MMBOT: could not process the message because : " + e.__repr__())
@@ -48,3 +54,4 @@ def post_msg(chan_name, msg):
     res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
     if(res.getcode() != 200):
         print "WARNING : Tried to post a msg on MM but MM returned response code != 200"
+
