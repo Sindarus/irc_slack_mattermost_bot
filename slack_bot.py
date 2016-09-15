@@ -171,10 +171,10 @@ class SlackBot:
         while(True):
             res = re.search("<@(U[0-9A-Z]{8})>", msg)
             if type(res).__name__ == 'NoneType':    # if there's no match
-                return msg
-            else:
-                cur_name = self.user_name(res.group(1))
-                msg = msg.replace(res.group(), "@" + cur_name)
+                break
+
+            cur_name = self.user_name(res.group(1))
+            msg = msg.replace(res.group(), "@" + cur_name)
 
         return msg
 

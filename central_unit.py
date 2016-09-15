@@ -9,6 +9,7 @@ from message import *
 from chan import *
 from irc_bot import *
 from slack_bot import *
+import mm_bot
 
 #I know using global variable is considered to be a bad habit,
 #but in this case, they are useful and simple enough to not make the program dirty.
@@ -32,6 +33,8 @@ def handle_msg(msg):
             my_ircbot.post_msg(cur_chan.chan_name, msg)
         elif cur_chan.chat_type == "Slack":
             my_slackbot.post_msg(cur_chan.chan_name, msg)
+        elif cur_chan.chat_type == "MM":
+            mm_bot.post_msg(cur_chan.chan_name, msg)
         else:
             print("While handling a message : Unknown chat type")
 
@@ -60,3 +63,5 @@ def start():
     threading.Thread(target=my_ircbot.start).start()
     print("starting slackbot in a thread")
     threading.Thread(target=my_slackbot.start).start()
+    print("startin mmbot in a thread")
+    threading.Thread(target=mm_bot.start())
