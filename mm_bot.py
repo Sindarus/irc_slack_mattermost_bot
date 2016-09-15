@@ -27,15 +27,19 @@ class hello:
             return
 
         try:
-            print("MMBOT: transfering message to central_unit")
-            central_unit.handle_msg(Message(
-                chan_orig=Chan("MM", input.channel_name),
-                author=input.user_name.encode("utf-8"),
-                msg=input.text.encode("utf-8"))
-            )
+            channel_name = input.channel_name
+            user_name = input.user_name
+            text = input.text
         except Exception, e:
-            print("MMBOT: could not process the message because : " + e.__repr__())
+            print("MMBOT: receied post request did not contain all needed data. Got exception : " + e.__repr__())
             return
+
+        print("MMBOT: transfering message to central_unit")
+        central_unit.handle_msg(Message(
+            chan_orig=Chan("MM", input.channel_name),
+            author=input.user_name,
+            msg=input.text)
+        )
 
 def start():
     print("MMBOT: launching")
@@ -54,4 +58,3 @@ def post_msg(chan_name, msg):
     res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
     if(res.getcode() != 200):
         print "WARNING : Tried to post a msg on MM but MM returned response code != 200"
-
