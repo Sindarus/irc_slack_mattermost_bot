@@ -120,11 +120,9 @@ class SlackBot:
             time.sleep(c.SLACKBOT_REFRESH_TIME)
 
             # reading websocket
-            print("SLACKBOT: reading slack messages")
             last_read = self.client.rtm_read()
             if not last_read:
-                print("No message")
-                continue
+                continue    # nothing was read
 
             # trying to harvest a message from what we've read from websocker
             msg = ""
@@ -133,12 +131,10 @@ class SlackBot:
                 channel = last_read[0]['channel']
                 user = last_read[0]['user']
             except Exception, e:
-                print("Not a message because : " + e.__repr__());
-                continue
+                continue    # was not a message
 
             if msg == "":
-                print("empty message")
-                continue
+                continue    # empty message
 
             #retrieve real names, not IDs
             channel = self.chan_name(channel)
@@ -150,10 +146,9 @@ class SlackBot:
             user = user.encode('utf8')
 
             msg = self.replace_user_id_in_msg(msg)
-	    msg = msg.encode('utf-8')
+	        msg = msg.encode('utf-8')
 
             # transfering to central unit
-            print("(SLACK " + channel + ") " + user + " : " + msg)
             central_unit.handle_msg(Message(
                 chan_orig = Chan("Slack", channel),
                 author = user,
@@ -184,6 +179,8 @@ class SlackBot:
         message posted it."""
 
         assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(msg).__name__
+
+        print("SLACKBOT: Posting to slack")
         self.client.api_call(
             "chat.postMessage",
             channel=chan_name,
