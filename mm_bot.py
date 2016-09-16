@@ -24,6 +24,7 @@ class hello:
         input = web.input()
         if(input.token not in c.MMBOT_OUTHOOK_TOKEN):
             print("WARNING: MMBOT received a post request but the token was wrong. Ignoring request.")
+	    print("token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
             return
 
         try:
