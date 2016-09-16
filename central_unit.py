@@ -23,7 +23,7 @@ def handle_msg(msg):
     chan from which the message comes), and then calls the right bots
     so that the messages are sent on every chan twins"""
 
-    assert isinstance(msg, Message), "msg has to be a Message object"
+    assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(Message).__name__
 
     print("handling msg : " + msg.__repr__())
     twins = twinnings.get_chan_twins(msg.chan_orig)

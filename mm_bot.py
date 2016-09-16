@@ -56,6 +56,11 @@ def post_msg(chan_name, msg):
     request = 'payload={"channel": "%(chan_name)s", "username" : "%(author)s", "text": "%(msg)s"}' % locals()
 
     print("MMBOT: posting to MM")
-    res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
+    try:
+        res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
+    except Exception, e:
+        print("Tried posting to MM but got error : " + e.__repr__())
+        print("Request send was : " + request)
+
     if(res.getcode() != 200):
         print "WARNING : Tried to post a msg on MM but MM returned response code != 200"

@@ -59,7 +59,6 @@ class IrcBot(ircbot.SingleServerIRCBot):
         chan_name = ev.target()
         msg = ev.arguments()[0]
 
-        print("( IRC ) " + author + " : " + msg)
         central_unit.handle_msg(Message(
             chan_orig = Chan("IRC", chan_name),
             author = author,
