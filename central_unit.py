@@ -58,10 +58,29 @@ def start():
     print("creating slackbot")
     my_slackbot = SlackBot()
 
+
+    #preparing threads
+    #we set the flag "Deamon" on each thread. The whole programm quits when
+    #there is no non-deamon thread running; in our case : when the original
+    #thread terminates.
+    irc_thread = threading.Thread(target=my_ircbot.start, name="irc thread")
+    irc_thread.setDaemon(True)
+    slackbot_thread = threading.Thread(target=my_slackbot.start, name="slackbot thread")
+    slackbot_thread.setDaemon(True)
+    mmbot_thread = threading.Thread(target=mm_bot.start, name="mmbot thread")
+    mmbot_thread.setDaemon(True)
+
     #running bots
     print("starting ircbot in a thread")
-    threading.Thread(target=my_ircbot.start).start()
+    irc_thread.start()
     print("starting slackbot in a thread")
-    threading.Thread(target=my_slackbot.start).start()
+    slackbot_thread.start()
     print("starting mmbot in a thread")
-    threading.Thread(target=mm_bot.start())
+    mmbot_thread.start()
+
+    s = ""
+    while(s != "quit"):
+        print("======= Enter 'quit' anytime to quit the programm =======")
+        s = raw_input()
+
+    print("======= QUITTING ! =======")
