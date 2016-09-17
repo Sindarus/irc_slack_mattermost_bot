@@ -146,7 +146,7 @@ class SlackBot:
             user = user.encode('utf8')
 
             msg = self.replace_user_id_in_msg(msg)
-	        msg = msg.encode('utf-8')
+            msg = msg.encode('utf-8')
 
             # transfering to central unit
             central_unit.handle_msg(Message(
