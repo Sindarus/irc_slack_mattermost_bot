@@ -61,6 +61,7 @@ def post_msg(chan_name, msg):
     except Exception, e:
         print("Tried posting to MM but got error : " + e.__repr__())
         print("Request send was : " + request)
+        return
 
     if(res.getcode() != 200):
         print "WARNING : Tried to post a msg on MM but MM returned response code != 200"
