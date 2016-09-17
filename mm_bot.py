@@ -52,7 +52,9 @@ def post_msg(chan_name, msg):
     assert isinstance(msg, Message), "msg should be a Message, was a " + type(msg).__name__
 
     # preparing request to send to MM API
-    payload = json.dumps({"channel": chan_name, "username": msg.author, "text": msg.msg})
+    msg = msg.msg.replace(";", ",") # replace semicolon by coma.
+                                    # semicolons cause the MM parser to crash
+    payload = json.dumps({"channel": chan_name, "username": msg.author, "text": msg})
     request = 'payload=' + payload
 
     print("MMBOT: posting to MM")
