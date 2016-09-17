@@ -32,7 +32,7 @@ class hello:
             user_name = input.user_name
             text = input.text
         except Exception, e:
-            print("MMBOT: receied post request did not contain all needed data. Got exception : " + e.__repr__())
+            print("MMBOT: received post request did not contain all needed data. Got exception : " + e.__repr__())
             return
 
         print("MMBOT: transfering message to central_unit")
@@ -59,7 +59,9 @@ def post_msg(chan_name, msg):
     try:
         res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
     except Exception, e:
-        print("Tried posting to MM but got error : " + e.__repr__())
+        print("Tried posting to MM but got error : ")
+        print("error.__repr__() = " + e.__repr__())
+        print("error.__str__() = " + e.__str__())
         print("Request send was : " + request)
         return
 
