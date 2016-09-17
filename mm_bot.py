@@ -4,6 +4,7 @@
 import web
 import urllib2  # to send get requests
 
+import json
 import config as c
 import central_unit
 from message import *
@@ -51,9 +52,8 @@ def post_msg(chan_name, msg):
     assert isinstance(msg, Message), "msg should be a Message, was a " + type(msg).__name__
 
     # preparing request to send to MM API
-    author = msg.author #this is needed for the string formatting to work
-    msg = msg.msg
-    request = 'payload={"channel": "%(chan_name)s", "username" : "%(author)s", "text": "%(msg)s"}' % locals()
+    payload = json.dumps({"channel": chan_name, "username": msg.author, "text": msg.msg})
+    request = 'payload=' + payload
 
     print("MMBOT: posting to MM")
     try:
