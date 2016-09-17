@@ -120,7 +120,13 @@ class SlackBot:
             time.sleep(c.SLACKBOT_REFRESH_TIME)
 
             # reading websocket
-            last_read = self.client.rtm_read()
+            try:
+                last_read = self.client.rtm_read()
+            except Exception, e:
+                print("WARNING: slackbot tried reading websocket but got error : ")
+                print("error.__repr__() : " + e.__repr__())
+                print("error.__str__() : " + e.__str__())
+
             if not last_read:
                 continue    # nothing was read
 
