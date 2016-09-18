@@ -122,6 +122,9 @@ class SlackBot:
             # reading websocket
             try:
                 last_read = self.client.rtm_read()
+            except WebSocketConnectionClosedException, e:
+                print("Slackbot tried reading websocket but websocket was closed. Now reopening websocket.")
+                self.initiate_rtm_api()
             except Exception, e:
                 print("WARNING: slackbot tried reading websocket but got error : ")
                 print("error.__repr__() : " + e.__repr__())
