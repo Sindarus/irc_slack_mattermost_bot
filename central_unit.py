@@ -79,8 +79,8 @@ def start():
     mmbot_thread.start()
 
     s = ""
-    while(s != "quit"):
-        print("======= Enter 'quit' anytime to quit the programm =======")
+    while(s != "quit" and s != "exit"):
+        print("======= Enter 'quit' or 'exit' anytime to quit the programm =======")
         s = raw_input()
 
     print("======= QUITTING ! =======")
