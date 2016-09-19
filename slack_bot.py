@@ -96,11 +96,13 @@ class SlackBot:
 
     def initiate_rtm_api(self):
         """initiating websocket connection to slack"""
-        if not self.client.rtm_connect():
-            print("SLACKBOT: There was a problem starting the real time messaging system for slack.")
-            exit()
-        else:
-            print("SLACKBOT: Successfully started real time messaging system for slack")
+        while not self.client.rtm_connect():
+            print("SLACKBOT: There was a problem starting the real time messaging system for slack. Retrying in 5 seconds")
+            time.sleep(c.SLACKBOT_REFRESH_TIME)
+            #There's no problem being stuck here with a "while", cause anyways, if
+            #we cannot connect to the RTM, there's nothing else we can do.
+
+        print("SLACKBOT: Successfully started real time messaging system for slack")
 
     def start(self):
         """
@@ -122,13 +124,17 @@ class SlackBot:
             # reading websocket
             try:
                 last_read = self.client.rtm_read()
-            except WebSocketConnectionClosedException, e:
-                print("Slackbot tried reading websocket but websocket was closed. Now reopening websocket.")
-                self.initiate_rtm_api()
             except Exception, e:
-                print("WARNING: slackbot tried reading websocket but got error : ")
-                print("error.__repr__() : " + e.__repr__())
-                print("error.__str__() : " + e.__str__())
+                if type(e).__name__ == "WebSocketConnectionClosedException":
+                    #except WebSocketConnectionClosedException, e: did not work, dunno why.
+                    print("Slackbot tried reading websocket but websocket was closed. Now reopening websocket.")
+                    self.initiate_rtm_api()
+                    continue
+                else:
+                    print("WARNING: slackbot tried reading websocket but got error : ")
+                    print("type(error).__name__ : " + type(e).__name__)
+                    print("error.__repr__() : " + e.__repr__())
+                    print("error.__str__() : " + e.__str__())
 
             if not last_read:
                 continue    # nothing was read
