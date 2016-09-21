@@ -5,7 +5,11 @@ from datetime import datetime
 import config as c
 
 def log(level, text):
-    """Utility"""
+    """Utility to display pretty logs. `text` is supposed to be either an object
+    to print, or a list of object to print. The time is printed along with the
+    log mesage. This function handles log levels. You can choose what log levels
+    to display in the config.py file"""
+
     if not level <= c.DEBUG_LEVEL:
         return # log is not important enough to be printed
 
