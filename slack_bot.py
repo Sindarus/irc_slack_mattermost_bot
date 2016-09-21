@@ -7,6 +7,7 @@ import re
 import unicodedata
 from slackclient import SlackClient
 
+import verbose as v
 import config as c
 import central_unit
 
@@ -19,7 +20,7 @@ class SlackBot:
     """
 
     def __init__(self):
-        print("SLACKBOT: Initiating slackclient")
+        v.log(3, "SLACKBOT: Initiating slackclient")
         self.client = SlackClient(c.SLACKBOT_TOKEN)
 
         if c.WELCOME_MESSAGES:
@@ -32,7 +33,7 @@ class SlackBot:
         twinned with.
         """
 
-        print("SLACKBOT: Sending welcome msg")
+        v.log(3, "SLACKBOT: Sending welcome msg")
         for cur_twinning in central_unit.twinnings.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "Slack":
@@ -49,7 +50,7 @@ class SlackBot:
         builds the property `char_name` which is a dictionnary whose keys are
         channel IDs, and whose values are corresponding names"""
 
-        print("SLACKBOT: retrieving channel names")
+        v.log(3, "SLACKBOT: retrieving channel names")
         self.chan_names = {}
         data = self.client.api_call("channels.list")
         for channel in data["channels"]:
@@ -66,14 +67,14 @@ class SlackBot:
             try:
                 ret = self.chan_names[id]
             except Exception as e:
-                print("WARNING: could not find chan name")
+                v.log(2, "Could not find chan name")
                 ret = id #fallback: keep id as name
         return ret
 
     def retrieve_user_names(self):
         """same as retrieve_chan_names, but for user names"""
 
-        print("SLACKBOT: retrieving user names")
+        v.log(3, "SLACKBOT: retrieving user names")
         self.user_names = {}
         data = self.client.api_call("users.list")
         for user in data["members"]:
@@ -90,19 +91,19 @@ class SlackBot:
             try:
                 ret = self.user_names[id]
             except Exception as e:
-                print("WARNING: could not find chan name")
+                v.log(2, "could not find chan name")
                 ret = id #fallback: keep id as name
         return ret
 
     def initiate_rtm_api(self):
         """initiating websocket connection to slack"""
         while not self.client.rtm_connect():
-            print("SLACKBOT: There was a problem starting the real time messaging system for slack. Retrying in 5 seconds")
+            v.log(2, "SLACKBOT: There was a problem starting the real time messaging system for slack. Retrying in 5 seconds")
             time.sleep(c.SLACKBOT_REFRESH_TIME)
             #There's no problem being stuck here with a "while", cause anyways, if
             #we cannot connect to the RTM, there's nothing else we can do.
 
-        print("SLACKBOT: Successfully started real time messaging system for slack")
+        v.log(3, "SLACKBOT: Successfully started real time messaging system for slack")
 
     def start(self):
         """
@@ -117,7 +118,7 @@ class SlackBot:
         self.initiate_rtm_api()
 
         # main loop
-        print("SLACKBOT: Launching main loop for slack")
+        v.log(3, "SLACKBOT: Launching main loop for slack")
         while True:
             time.sleep(c.SLACKBOT_REFRESH_TIME)
 
@@ -127,14 +128,11 @@ class SlackBot:
             except Exception, e:
                 if type(e).__name__ == "WebSocketConnectionClosedException":
                     #except WebSocketConnectionClosedException, e: did not work, dunno why.
-                    print("Slackbot tried reading websocket but websocket was closed. Now reopening websocket.")
+                    v.log(2, "Slackbot tried reading websocket but websocket was closed. Now reopening websocket.")
                     self.initiate_rtm_api()
                     continue
                 else:
-                    print("WARNING: slackbot tried reading websocket but got error : ")
-                    print("type(error).__name__ : " + type(e).__name__)
-                    print("error.__repr__() : " + e.__repr__())
-                    print("error.__str__() : " + e.__str__())
+                    v.log(1, "WARNING: slackbot tried reading websocket but got error : " + e.__str__())
 
             if not last_read:
                 continue    # nothing was read
@@ -195,7 +193,7 @@ class SlackBot:
 
         assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(msg).__name__
 
-        print("SLACKBOT: Posting to slack")
+        v.log(3, "SLACKBOT: Posting to slack")
         self.client.api_call(
             "chat.postMessage",
             channel=chan_name,

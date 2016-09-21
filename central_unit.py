@@ -4,6 +4,7 @@
 import threading
 import time
 
+import verbose as v
 from twinning_table import *
 from message import *
 from chan import *
@@ -25,7 +26,7 @@ def handle_msg(msg):
 
     assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(Message).__name__
 
-    print("handling msg : " + msg.__repr__())
+    v.log(4, ["handling msg : ", msg.__repr__()])
     twins = twinnings.get_chan_twins(msg.chan_orig)
 
     for cur_chan in twins:
@@ -36,7 +37,7 @@ def handle_msg(msg):
         elif cur_chan.chat_type == "MM":
             mm_bot.post_msg(cur_chan.chan_name, msg)
         else:
-            print("While handling a message : Unknown chat type")
+            v.log(1, "While handling a message : Unknown chat type")
 
 def start():
     """starts the whole system by retrieving config.py options, creating
@@ -48,14 +49,14 @@ def start():
     global my_slackbot
 
     #loading twinning table from config file
-    print("loading twinning table")
+    v.log(3, "loading twinning table")
     twinnings = TwinningTable(c.TWINNINGS)
-    print(twinnings)
+    v.log(3, twinnings)
 
     #creating bots
-    print("creating ircbot")
+    v.log(3, "creating ircbot")
     my_ircbot = IrcBot()
-    print("creating slackbot")
+    v.log(3, "creating slackbot")
     my_slackbot = SlackBot()
 
 
@@ -71,11 +72,11 @@ def start():
     mmbot_thread.setDaemon(True)
 
     #running bots
-    print("starting ircbot in a thread")
+    v.log(3, "starting ircbot in a thread")
     irc_thread.start()
-    print("starting slackbot in a thread")
+    v.log(3, "starting slackbot in a thread")
     slackbot_thread.start()
-    print("starting mmbot in a thread")
+    v.log(3, "starting mmbot in a thread")
     mmbot_thread.start()
 
     s = ""

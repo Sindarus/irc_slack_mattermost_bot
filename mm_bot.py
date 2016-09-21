@@ -4,6 +4,7 @@
 import web
 import urllib2  # to send get requests
 
+import verbose as v
 import json
 import config as c
 import central_unit
@@ -21,11 +22,11 @@ class bonjour:
 
 class hello:
     def POST(self):
-        print("MMBOT: received a post request")
+        v.log(3, "MMBOT: received a post request")
         input = web.input()
-        if(input.token not in c.MMBOT_OUTHOOK_TOKEN):
-            print("WARNING: MMBOT received a post request but the token was wrong. Ignoring request.")
-	    print("token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
+        if input.token not in c.MMBOT_OUTHOOK_TOKEN:
+            v.log(1, "MMBOT received a post request but the token was wrong. Ignoring request.")
+            v.log(1, "token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
             return
 
         try:
@@ -33,10 +34,10 @@ class hello:
             user_name = input.user_name
             text = input.text
         except Exception, e:
-            print("MMBOT: received post request did not contain all needed data. Got exception : " + e.__repr__())
+            v.log(1, "MMBOT: received post request did not contain all needed data. Got exception : " + e.__repr__())
             return
 
-        print("MMBOT: transfering message to central_unit")
+        v.log(3, "MMBOT: transfering message to central_unit")
         central_unit.handle_msg(Message(
             chan_orig=Chan("MM", channel_name.encode("utf-8")),
             author=user_name.encode("utf-8"),
@@ -44,7 +45,7 @@ class hello:
         )
 
 def start():
-    print("MMBOT: launching")
+    v.log(3, "MMBOT: launching")
     web.httpserver.runsimple(app.wsgifunc(), (c.MMBOT_BINDING_IP, c.MMBOT_BINDING_PORT))
 
 def post_msg(chan_name, msg):
@@ -55,19 +56,15 @@ def post_msg(chan_name, msg):
     text = msg.msg.replace(";", "☮") # replace semicolon.
                                      # semicolons cause the MM parser to crash
     text = text.replace("&", "☮")    # replace ampersands
-    text = text.replace("%", "☮")
     payload = json.dumps({"channel": chan_name, "username": msg.author, "text": text})
     request = 'payload=' + payload
 
-    print("MMBOT: posting to MM")
+    v.log(3, "MMBOT: posting to MM")
     try:
         res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
     except Exception, e:
-        print("Tried posting to MM but got error : ")
-        print("error.__repr__() = " + e.__repr__())
-        print("error.__str__() = " + e.__str__())
-        print("Request send was : " + request)
+        v.log(1, ["Tried posting to MM but got error : ", e, "\nRequest sent was : ", request])
         return
 
     if(res.getcode() != 200):
-        print "WARNING : Tried to post a msg on MM but MM returned response code != 200"
+        v.log(2, "WARNING : Tried to post a msg on MM but MM returned response code != 200")

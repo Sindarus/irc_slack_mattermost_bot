@@ -4,6 +4,7 @@
 import irclib
 import ircbot
 
+import verbose as v
 import config as c
 import central_unit
 
@@ -16,7 +17,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
     """
 
     def __init__(self):
-        print("IRCBOT: Connecting to irc")
+        v.log(3, "IRCBOT: Connecting to irc")
         self.connected = False
         ircbot.SingleServerIRCBot.__init__(
             self,
@@ -27,11 +28,11 @@ class IrcBot(ircbot.SingleServerIRCBot):
 
     def join_to_chans(self):
         """Make ircbot join all the channels that need to be monitored"""
-        print("IRCBOT: joining chans")
+        v.log(3, "IRCBOT: joining chans")
         for cur_twinning in central_unit.twinnings.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
-                    print("IRCBOT: joining " + cur_chan.chan_name)
+                    v.log(3, "IRCBOT: joining " + cur_chan.chan_name)
                     self.serv.join(cur_chan.chan_name)
 
     def on_welcome(self, serv, ev):
@@ -40,7 +41,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
         Note that you can join channel before that.
         """
 
-        print("IRCBOT: connected to irc")
+        v.log(3, "IRCBOT: connected to irc")
         self.connected = True
         self.serv = serv
 
@@ -72,7 +73,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
         twinned with.
         """
 
-        print("IRCBOT: sending welcome message")
+        v.log(3, "IRCBOT: sending welcome message")
         for cur_twinning in central_unit.twinnings.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
@@ -90,10 +91,10 @@ class IrcBot(ircbot.SingleServerIRCBot):
         assert isinstance(msg, Message), "msg has to be a msg"
 
         if not self.connected:
-            print("WARNING : the ircbot was requested to post a message, but it is not connected yet !")
+            v.log(2, "the ircbot was requested to post a message, but it is not connected yet !")
             return
 
-        print("IRCBOT: posting to irc")
+        v.log(3, "IRCBOT: posting to irc")
         self.serv.privmsg(
             chan_name,
             "<" + msg.author + "> " + msg.msg
