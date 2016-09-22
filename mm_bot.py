@@ -56,6 +56,8 @@ def post_msg(chan_name, msg):
     text = msg.msg.replace(";", "☮") # replace semicolon.
                                      # semicolons cause the MM parser to crash
     text = text.replace("&", "☮")    # replace ampersands
+    text = text.replace("%", "☮")    # replace percent symbol
+    text = text.replace("+", "☮")    # replace plus symbol
     payload = json.dumps({"channel": chan_name, "username": msg.author, "text": text})
     request = 'payload=' + payload
 
