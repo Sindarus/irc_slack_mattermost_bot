@@ -8,7 +8,7 @@ import unicodedata
 from slackclient import SlackClient
 
 import verbose as v
-import config as c
+from config import cfg as c
 import central_unit
 
 from message import *

@@ -11,6 +11,7 @@ from chan import *
 from irc_bot import *
 from slack_bot import *
 import mm_bot
+from config import cfg as c
 
 #I know using global variable is considered to be a bad habit,
 #but in this case, they are useful and simple enough to not make the program dirty.

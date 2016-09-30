@@ -5,7 +5,7 @@ import irclib
 import ircbot
 
 import verbose as v
-import config as c
+from config import cfg as c
 import central_unit
 
 from message import *
