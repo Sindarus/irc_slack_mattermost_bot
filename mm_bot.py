@@ -24,9 +24,9 @@ class hello:
     def POST(self):
         v.log(3, "MMBOT: received a post request")
         input = web.input()
-        if input.token not in c.MMBOT_OUTHOOK_TOKEN:
+        if input.token not in c["MMBOT_OUTHOOK_TOKEN"]:
             v.log(1, "MMBOT received a post request but the token was wrong. Ignoring request.")
-            v.log(1, "token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
+            v.log(1, "token was : " + input.token + " expecting : " + c["MMBOT_OUTHOOK_TOKEN"].__repr__())
             return
 
         try:
@@ -46,7 +46,7 @@ class hello:
 
 def start():
     v.log(3, "MMBOT: launching")
-    web.httpserver.runsimple(app.wsgifunc(), (c.MMBOT_BINDING_IP, c.MMBOT_BINDING_PORT))
+    web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
 
 def post_msg(chan_name, msg):
     assert isinstance(chan_name, str), "Chan_name should be a string, was a " + type(chan_name).__name__
@@ -63,7 +63,7 @@ def post_msg(chan_name, msg):
 
     v.log(3, "MMBOT: posting to MM")
     try:
-        res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
+        res = urllib2.urlopen(c["MMBOT_INHOOK_URL"], request)
     except Exception, e:
         v.log(1, ["Tried posting to MM but got error : ", e, "\nRequest sent was : ", request])
         return

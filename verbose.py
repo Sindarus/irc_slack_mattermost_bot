@@ -55,7 +55,7 @@ def log(level, text):
         print(e)
 
     # print to stdout (or not)
-    if not level <= c.DEBUG_LEVEL:
+    if not level <= c["DEBUG_LEVEL"]:
         return # log is not important enough to be printed
     else:
         print(str_to_print)
