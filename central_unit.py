@@ -12,6 +12,7 @@ from irc_bot import *
 from slack_bot import *
 import mm_bot
 from config import cfg as c
+from config import TWINNINGS
 
 #I know using global variable is considered to be a bad habit,
 #but in this case, they are useful and simple enough to not make the program dirty.
@@ -51,7 +52,7 @@ def start():
 
     #loading twinning table from config file
     v.log(3, "loading twinning table")
-    twinnings = TwinningTable(c.TWINNINGS)
+    twinnings = TwinningTable(TWINNINGS)
     v.log(3, twinnings)
 
     #creating bots

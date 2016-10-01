@@ -21,9 +21,9 @@ class SlackBot:
 
     def __init__(self):
         v.log(3, "SLACKBOT: Initiating slackclient")
-        self.client = SlackClient(c.SLACKBOT_TOKEN)
+        self.client = SlackClient(c["SLACKBOT_TOKEN"])
 
-        if c.WELCOME_MESSAGES:
+        if c["WELCOME_MESSAGES"]:
             self.send_welcome_msg()
 
     def send_welcome_msg(self):
@@ -99,7 +99,7 @@ class SlackBot:
         """initiating websocket connection to slack"""
         while not self.client.rtm_connect():
             v.log(2, "SLACKBOT: There was a problem starting the real time messaging system for slack. Retrying in 5 seconds")
-            time.sleep(c.SLACKBOT_REFRESH_TIME)
+            time.sleep(c["SLACKBOT_REFRESH_TIME"])
             #There's no problem being stuck here with a "while", cause anyways, if
             #we cannot connect to the RTM, there's nothing else we can do.
 
@@ -120,7 +120,7 @@ class SlackBot:
         # main loop
         v.log(3, "SLACKBOT: Launching main loop for slack")
         while True:
-            time.sleep(c.SLACKBOT_REFRESH_TIME)
+            time.sleep(c["SLACKBOT_REFRESH_TIME"])
 
             # reading websocket
             try:
@@ -199,5 +199,5 @@ class SlackBot:
             channel=chan_name,
             text=msg.msg,
             username=msg.author,
-            icon_emoji=c.SLACK_ICON_EMOJI
+            icon_emoji=c["SLACK_ICON_EMOJI"]
         )

@@ -21,9 +21,9 @@ class IrcBot(ircbot.SingleServerIRCBot):
         self.connected = False
         ircbot.SingleServerIRCBot.__init__(
             self,
-            [(c.IRC_SERVER, c.IRC_PORT)],
-            c.IRCBOT_NAME,
-            c.IRCBOT_LONG_NAME
+            [(c["IRC_SERVER"], c["IRC_PORT"])],
+            c["IRCBOT_NAME"],
+            c["IRCBOT_LONG_NAME"]
         )
 
     def join_to_chans(self):
@@ -47,7 +47,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
 
         self.join_to_chans()
 
-        if c.WELCOME_MESSAGES:
+        if c["WELCOME_MESSAGES"]:
             self.send_welcome_msg()
 
     def on_pubmsg(self, serv, ev):
