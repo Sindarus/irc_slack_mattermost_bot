@@ -18,9 +18,9 @@ from default_cfg import default_cfg
 #names, even if there are uppercases letters on mattermost."
 TWINNINGS = [
     [Chan("MM", "botwar"), Chan("IRC", "#test-ircbot"), Chan("Slack", "#bot-testing")]
-    #,[Chan("MM", "strasbourg"), Chan("IRC", "#strasbourg"), Chan("Slack", "#strasbourg")]
-    #,[Chan("MM", "ares"), Chan("IRC", "#ares"), Chan("Slack", "#irc")]
-    #,[Chan("MM", "dailliie planet"), Chan("IRC", "#ares"), Chan("Slack", "#general")]
+    ,[Chan("MM", "strasbourg"), Chan("IRC", "#strasbourg"), Chan("Slack", "#strasbourg")]
+    ,[Chan("MM", "ares"), Chan("IRC", "#ares"), Chan("Slack", "#irc")]
+    ,[Chan("MM", "dailiieplanet"), Chan("IRC", "#dailiieplanet")]
 ]
 
 # ==============================================================================
