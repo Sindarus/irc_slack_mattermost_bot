@@ -41,6 +41,22 @@ def handle_msg(msg):
         else:
             v.log(1, "While handling a message : Unknown chat type")
 
+    do_commands(msg)
+
+def do_commands(in_msg):j
+    if(in_msg.msg.find("!twinning_bot") != 0): # if msg starts with !twinning_bot
+        if(in_msg.msg == "!twinning_bot help"):
+            text = "Available commands : help, isup, current_twinnings."
+        elif(in_msg.msg == "!twinning_bot isup"):
+            text = "Twinning bot is UP."
+        elif(in_msg.msg == "!twinning_bot current_twinnings"):
+            text = "Current twinnings are : " + str(twinnings.table)
+        else
+            text = "Unknown command. See !twinning_bot help."
+
+        msg = Message(in_msg.chan_orig, "Twinning bot", text)
+        handle_msg(msg)
+
 def start():
     """starts the whole system by retrieving config.py options, creating
     the bots and launching them in a separate thread"""
