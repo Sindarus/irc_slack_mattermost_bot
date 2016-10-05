@@ -69,11 +69,10 @@ def post_msg(chan_name, msg):
     assert isinstance(msg, Message), "msg should be a Message, was a " + type(msg).__name__
 
     # preparing request to send to MM API
-    text = msg.msg.replace(";", "☮") # replace semicolon.
-                                     # semicolons cause the MM parser to crash
-    text = text.replace("&", "☮")    # replace ampersands
-    text = text.replace("%", "☮")    # replace percent symbol
-    text = text.replace("+", "☮")    # replace plus symbol
+    text = msg.msg.replace(";", "%3B") # encode semicolon
+    text = text.replace("&", "%26")    # encode ampersands
+    text = text.replace("%", "%25")    # encode percent symbol
+    text = text.replace("+", "%2B")    # encode plus symbol
 
     v.log(3, "MMBOT: posting to MM")
     send_request({"channel": chan_name, "username": msg.author, "text": text})
