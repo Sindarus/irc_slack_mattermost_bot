@@ -2,3 +2,4 @@
 test.py
 set_env.sh
 *.log
+log*
