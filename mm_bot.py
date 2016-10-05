@@ -3,9 +3,10 @@
 
 import web
 import urllib2  # to send get requests
+import threading
+import json
 
 import verbose as v
-import json
 from config import cfg as c
 import central_unit
 from message import *
@@ -18,7 +19,7 @@ app = web.application(urls, globals())
 
 class bonjour:
     def GET(self):
-    return "This is a test page to see if the webserver is reachable."
+        return "This is a test page to see if the webserver is reachable."
 
 class hello:
     def POST(self):
@@ -46,9 +47,14 @@ class hello:
 
 def start():
     v.log(3, "MMBOT: launching")
-    web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
+    webserver_thread = threading.Thread(target=launch_webserver, name="webserver thread")
+    webserver_thread.setDaemon(True)
+    webserver_thread.start()
     if c["WELCOME_MESSAGES"]:
         send_welcome_msg()
+
+def launch_webserver():
+    web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
 
 def send_welcome_msg():
     v.log(3, "MMBOT: Sending welcome msg")
