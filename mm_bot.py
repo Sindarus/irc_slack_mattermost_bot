@@ -18,7 +18,7 @@ app = web.application(urls, globals())
 
 class bonjour:
     def GET(self):
-	return "This is a test page to see if the webserver is reachable."
+    return "This is a test page to see if the webserver is reachable."
 
 class hello:
     def POST(self):
@@ -47,6 +47,16 @@ class hello:
 def start():
     v.log(3, "MMBOT: launching")
     web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
+    if c["WELCOME_MESSAGES"]:
+        send_welcome_msg()
+
+def send_welcome_msg():
+    v.log(3, "MMBOT: Sending welcome msg")
+    for cur_twinning in central_unit.twinnings.table:
+        for cur_chan in cur_twinning:
+            if cur_chan.chat_type == "MM":
+                msg = "(twinning bot) Twinning this chan with : " + str(central_unit.twinnings.get_chan_twins(cur_chan))
+                send_request({"channel": cur_chan.chan_name, "text": msg})
 
 def post_msg(chan_name, msg):
     assert isinstance(chan_name, str), "Chan_name should be a string, was a " + type(chan_name).__name__
@@ -58,10 +68,14 @@ def post_msg(chan_name, msg):
     text = text.replace("&", "☮")    # replace ampersands
     text = text.replace("%", "☮")    # replace percent symbol
     text = text.replace("+", "☮")    # replace plus symbol
-    payload = json.dumps({"channel": chan_name, "username": msg.author, "text": text})
-    request = 'payload=' + payload
 
     v.log(3, "MMBOT: posting to MM")
+    send_request({"channel": chan_name, "username": msg.author, "text": text})
+
+def send_request(my_hash):
+    payload = json.dumps(my_hash)
+    request = 'payload=' + payload
+
     try:
         res = urllib2.urlopen(c["MMBOT_INHOOK_URL"], request)
     except Exception, e:
@@ -69,4 +83,4 @@ def post_msg(chan_name, msg):
         return
 
     if(res.getcode() != 200):
-        v.log(2, "WARNING : Tried to post a msg on MM but MM returned response code != 200")
+        v.log(2, ["WARNING : Tried to post a msg on MM but MM returned response code != 200. request sent was : ", request])
