@@ -79,7 +79,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
                 if cur_chan.chat_type == "IRC":
                     self.serv.privmsg(
                         cur_chan.chan_name,
-                        "(Init) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__()
+                        "(Twinning bot) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__()
                     )
 
     def post_msg(self, chan_name, msg):
