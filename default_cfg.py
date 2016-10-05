@@ -53,6 +53,6 @@ default_cfg = {
     #slack icon used to imperson external posters
     "SLACK_ICON_EMOJI" : "cubimal-chick",
 
-    #activates or disables sending a message when the bot connects (True or False)
-    "WELCOME_MESSAGES" : False
+    #activates or disables sending a message when the bot connects (0 or 1)
+    "WELCOME_MESSAGES" : 0
 }

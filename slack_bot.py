@@ -39,7 +39,7 @@ class SlackBot:
                 if cur_chan.chat_type == "Slack":
                     self.client.api_call( "chat.postMessage",
                         channel=cur_chan.chan_name,
-                        text="(Init) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__(),
+                        text="(twinning bot) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__(),
                         username="relai-irc",
                         icon_emoji=':robot_face:'
                     )
