@@ -32,30 +32,47 @@ def handle_msg(msg):
     twins = twinnings.get_chan_twins(msg.chan_orig)
 
     for cur_chan in twins:
-        if cur_chan.chat_type == "IRC":
-            my_ircbot.post_msg(cur_chan.chan_name, msg)
-        elif cur_chan.chat_type == "Slack":
-            my_slackbot.post_msg(cur_chan.chan_name, msg)
-        elif cur_chan.chat_type == "MM":
-            mm_bot.post_msg(cur_chan.chan_name, msg)
-        else:
-            v.log(1, "While handling a message : Unknown chat type")
+        post_msg_on_chan(msg, cur_chan)
 
     do_commands(msg)
 
-def do_commands(in_msg):j
-    if(in_msg.msg.find("!twinning_bot") != 0): # if msg starts with !twinning_bot
+def post_msg_on_chan(msg, chan):
+    """posts msg on chan"""
+    if chan.chat_type == "IRC":
+        my_ircbot.post_msg(chan.chan_name, msg)
+    elif chan.chat_type == "Slack":
+        my_slackbot.post_msg(chan.chan_name, msg)
+    elif chan.chat_type == "MM":
+        mm_bot.post_msg(chan.chan_name, msg)
+    else:
+        v.log(1, "While handling a message : Unknown chat type")
+
+def broadcast(msg, twinning_index = -1):
+    """Sends msg to all chan in the twinnning that has twinning_index as index,
+    if twinning_index is left unset (it is optional), the msg is sent to ALL chans that
+    appear in the twinning table"""
+    if twinning_index == -1:
+	for chan in twinnings.get_all_chans():
+            post_msg_on_chan(msg, chan)
+    else:
+        for chan in twinnings.table[twinning_index]:
+            post_msg_on_chan(msg, chan)
+
+def do_commands(in_msg):
+    """Checks if there are commands intended for the twinning bot to execute. If there are
+    respond in the source chan and all its twins"""
+    if in_msg.msg.find("!twinning_bot") == 0: # if msg starts with !twinning_bot
         if(in_msg.msg == "!twinning_bot help"):
             text = "Available commands : help, isup, current_twinnings."
         elif(in_msg.msg == "!twinning_bot isup"):
             text = "Twinning bot is UP."
         elif(in_msg.msg == "!twinning_bot current_twinnings"):
             text = "Current twinnings are : " + str(twinnings.table)
-        else
+        else:
             text = "Unknown command. See !twinning_bot help."
 
         msg = Message(in_msg.chan_orig, "Twinning bot", text)
-        handle_msg(msg)
+        broadcast(msg, twinnings.get_twinning_index(in_msg.chan_orig))
 
 def start():
     """starts the whole system by retrieving config.py options, creating

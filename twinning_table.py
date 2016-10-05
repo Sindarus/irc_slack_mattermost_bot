@@ -33,5 +33,24 @@ class TwinningTable:
 
         return []   # if we couldn't find the chan in the twinning table
 
+    def get_twinning_index(self, chan):
+        """Returns the index of the twinning that contains `chan` or -1 if the chan
+        is not in the twinning table"""
+        for i in range(len(self.table)):
+            for cur_chan in self.table[i]:
+                 if cur_chan == chan:
+                     return i
+        return -1
+
+    def get_all_chans(self, chan):
+        """returns the list of all the chans present in this twinning table. if a chan
+        appears in several twinnings, it is only listed once"""
+        chan_list = []
+        for cur_twinning in self.table:
+            for cur_chan in cur_twinning:
+                if not cur_chan in chan_list:
+                    chan_list.push(cur_chan)
+        return chan_list
+
     def __repr__(self):
         return self.table.__repr__()
