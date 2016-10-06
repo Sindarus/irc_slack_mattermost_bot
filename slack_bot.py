@@ -161,6 +161,11 @@ class SlackBot:
             msg = self.replace_user_id_in_msg(msg)
             msg = msg.encode('utf-8')
 
+            #restore these 3 characters that get html-encoded by slack
+            msg = msg.replace("&lt;", "<")
+            msg = msg.replace("&gt;", ">")
+            msg = msg.replace("&amp;", "&")
+
             # transfering to central unit
             central_unit.handle_msg(Message(
                 chan_orig = Chan("Slack", channel),
