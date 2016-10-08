@@ -123,6 +123,9 @@ def start():
     s = ""
     while(s != "quit" and s != "exit"):
         print("======= Enter 'quit' or 'exit' anytime to quit the programm =======")
-        s = raw_input()
+        try:
+            s = raw_input()
+        except Exception, e:
+            time.sleep(60)
 
     print("======= QUITTING ! =======")
