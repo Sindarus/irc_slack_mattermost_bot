@@ -66,6 +66,27 @@ class IrcBot(ircbot.SingleServerIRCBot):
             msg = msg)
         )
 
+    def on_action(self, serv, ev):
+        """Method called when someones sends a /me on IRC."""
+        author = irclib.nm_to_n(ev.source())
+        chan_name = ev.target()
+        msg = ev.arguments()[0]
+
+        # add underscores to imply that it should be rendered in italic
+        msg = "_" + msg + "_"
+
+        central_unit.handle_msg(Message(
+            chan_orig = Chan("IRC", chan_name),
+            author = author,
+            msg = msg)
+        )
+
+    def on_invite(self, serv, ev):
+        """Method called when someones invites the bot to a channel on IRC."""
+        channel = ev.arguments()[0]
+
+        self.serv.join(channel)
+
     def send_welcome_msg(self):
         """
         Sends a welcome message on every channel that is twinned with another
