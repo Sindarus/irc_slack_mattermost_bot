@@ -43,7 +43,7 @@ def post_msg_on_chan(msg, chan):
     elif chan.chat_type == "Slack":
         my_slackbot.post_msg(chan.chan_name, msg)
     elif chan.chat_type == "MM":
-        mm_bot.post_msg(chan.chan_name, msg)
+        my_mmbot.post_msg(chan.chan_name, msg)
     else:
         v.log(1, "While handling a message : Unknown chat type")
 
