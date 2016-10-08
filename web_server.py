@@ -5,10 +5,12 @@ import web
 
 import central_unit
 from config import cfg as c
+import verbose as v
+from message import *
 
 urls = (
-    '/test', 'TestAction'
-    '/handle_msg', 'HandleMsgAction',
+    '/test', 'TestAction',
+    '/handle_msg', 'HandleMsgAction'
 )
 app = web.application(urls, globals())
 
@@ -44,7 +46,7 @@ class HandleMsgAction:
             return
 
         v.log(3, "WEBSERVER: transfering message to mm_bot")
-        mm_bot.receive_msg(Message(
+        central_unit.my_mmbot.receive_msg(Message(
             chan_orig=Chan("MM", channel_name.encode("utf-8")),
             author=user_name.encode("utf-8"),
             msg=text.encode("utf-8"))
