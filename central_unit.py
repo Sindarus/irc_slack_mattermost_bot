@@ -72,7 +72,11 @@ def do_commands(in_msg):
             text = "Unknown command. See !twinning_bot help."
 
         msg = Message(in_msg.chan_orig, "Twinning bot", text)
-        broadcast(msg, twinnings.get_twinning_index(in_msg.chan_orig))
+        twinning_index = twinnings.get_twinning_index(in_msg.chan_orig)
+        if(twinning_index != -1): # if chan_orig was found in the twinning table
+            broadcast(msg, twinning_index)
+        else:
+            post_msg_on_chan(msg, in_msg.chan_orig)
 
 def start():
     """starts the whole system by retrieving config.py options, creating
