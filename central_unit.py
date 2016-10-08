@@ -10,7 +10,7 @@ from message import *
 from chan import *
 from irc_bot import *
 from slack_bot import *
-import mm_bot
+from mm_bot import *
 from config import cfg as c
 from config import TWINNINGS
 
@@ -82,6 +82,7 @@ def start():
     global twinnings
     global my_ircbot
     global my_slackbot
+    global my_mmbot
 
     #loading twinning table from config file
     v.log(3, "loading twinning table")
@@ -93,7 +94,8 @@ def start():
     my_ircbot = IrcBot()
     v.log(3, "creating slackbot")
     my_slackbot = SlackBot()
-
+    v.log(3, "creating mmbot")
+    my_mmbot = MmBot()
 
     #preparing threads
     #we set the flag "Deamon" on each thread. The whole programm quits when
@@ -103,7 +105,7 @@ def start():
     irc_thread.setDaemon(True)
     slackbot_thread = threading.Thread(target=my_slackbot.start, name="slackbot thread")
     slackbot_thread.setDaemon(True)
-    mmbot_thread = threading.Thread(target=mm_bot.start, name="mmbot thread")
+    mmbot_thread = threading.Thread(target=my_mmbot.start, name="mmbot thread")
     mmbot_thread.setDaemon(True)
 
     #running bots
