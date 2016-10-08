@@ -3,3 +3,4 @@ test.py
 set_env.sh
 *.log
 log*
+run_docker_container.sh
