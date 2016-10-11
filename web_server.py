@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import web
+import time
 
 import central_unit
 from config import cfg as c
@@ -16,7 +17,16 @@ app = web.application(urls, globals())
 
 def start():
     """Starts the webserver"""
-    web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
+    for i in range(5):
+        try:
+            web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
+            v.log(3, "Successfully launched webserver.")
+            return
+        except Exception, e:
+            v.log(1, ["Got error : ", e, " while trying to launch webserver."])
+            if i != 4 :
+                v.log(1, "Retrying in 20 secs")
+            time.sleep(20)
 
 class TestAction:
     """Class associated with the /test URL"""
