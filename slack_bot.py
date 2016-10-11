@@ -110,12 +110,11 @@ class SlackBot:
         Starts the bot so that it begins monitoring slack activity, and transmitting
         received messages to the central unit as Messages objects.
         """
+        self.initiate_rtm_api()
 
         # retrieve chan names and user names needed to replace chan and user IDs
         self.retrieve_chan_names()
         self.retrieve_user_names()
-
-        self.initiate_rtm_api()
 
         # main loop
         v.log(3, "SLACKBOT: Launching main loop for slack")
