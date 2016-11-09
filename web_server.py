@@ -5,7 +5,7 @@ import web
 import time
 
 import central_unit
-from config import cfg as c
+import config as c
 import verbose as v
 from message import *
 

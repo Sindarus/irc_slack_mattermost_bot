@@ -7,7 +7,7 @@ import threading
 import json
 
 import verbose as v
-from config import cfg as c
+import config as c
 import central_unit
 from message import *
 import web_server

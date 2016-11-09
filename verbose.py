@@ -3,7 +3,7 @@
 
 import time
 from datetime import datetime
-from config import cfg as c
+import config as c
 
 timestamp = int(time.time())
 f = open('log_' + str(timestamp), 'a')

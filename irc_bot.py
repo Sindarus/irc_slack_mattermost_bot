@@ -5,8 +5,8 @@ import irclib
 import ircbot
 
 import verbose as v
-from config import cfg as c
 import central_unit
+import config as c
 
 from message import *
 from chan import *
@@ -23,7 +23,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
             self,
             [(c.IRC_SERVER, c.IRC_PORT)],
             c.IRCBOT_NAME,
-            c.IRCBOT_LONG_NAME]
+            c.IRCBOT_LONG_NAME
         )
 
     def join_to_chans(self):
