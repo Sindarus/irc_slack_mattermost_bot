@@ -42,9 +42,15 @@ class HandleMsgAction:
         """Method called when there is a POST request on handle_msg"""
         v.log(3, "WEBSERVER: received a post request")
         input = web.input()
-        if input.token not in c.MMBOT_OUTHOOK_TOKEN:
+
+        orig_server = None
+        for server in c.SERVERS:
+            if server.type == "MM":
+                if input.token in server.outhook_tokens:
+                    orig_server = server
+        if orig_server == None:
             v.log(1, "WEBSERVER received a post request but the token was wrong. Ignoring request.")
-            v.log(1, "token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
+            v.log(1, "token was : " + input.token)
             return
 
         try:
@@ -55,9 +61,9 @@ class HandleMsgAction:
             v.log(1, "WEBSERVER: received post request did not contain all needed data. Got exception : " + e.__repr__())
             return
 
-        v.log(3, "WEBSERVER: transfering message to mm_bot")
+        v.log(3, "WEBSERVER: transfering message to the right mm_bot")
         central_unit.my_mmbot.receive_msg(Message(
-            chan_orig=Chan("MM", channel_name.encode("utf-8")),
+            chan_orig=Chan(orig_server, channel_name.encode("utf-8")),
             author=user_name.encode("utf-8"),
             msg=text.encode("utf-8"))
         )

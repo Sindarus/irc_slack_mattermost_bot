@@ -19,6 +19,6 @@ class Message:
         self.msg = msg
 
     def __repr__(self):
-        ret = "(" + self.chan_orig.chat_type + " " + self.chan_orig.chan_name + ")"
+        ret = "(" + self.chan_orig.chat_server.display_name + " " + self.chan_orig.chan_name + ")"
         ret += " <" + self.author + "> " + self.msg
         return ret

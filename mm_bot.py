@@ -13,8 +13,8 @@ from message import *
 import web_server
 
 class MmBot:
-    def __init__(self):
-        pass
+    def __init__(self, chat_server):
+        self.chat_server = chat_server;
 
     def start(self):
         """Start the bot so that it begins listening to incoming messages,
@@ -32,11 +32,9 @@ class MmBot:
         one. The message tells with what other channels the said channel is
         twinned with."""
         v.log(3, "MMBOT: Sending welcome msg")
-        for cur_twinning in c.TWINNINGS.table:
-            for cur_chan in cur_twinning:
-                if cur_chan.chat_type == "MM":
-                    msg = "(twinning bot) Twinning this chan with : " + str(c.TWINNINGS.get_chan_twins(cur_chan))
-                    self.__send_request({"channel": cur_chan.chan_name, "text": msg})
+        for cur_chan in c.TWINNINGS.get_chan_by_server(self.chat_server):
+            msg = "(twinning bot) Twinning this chan with : " + str(c.TWINNINGS.get_chan_twins(cur_chan))
+            self.__send_request({"channel": cur_chan.chan_name, "text": msg})
 
     def receive_msg(self, msg):
         """Method that is called by webserver when it receives a msg from mattermost"""

@@ -37,14 +37,7 @@ def handle_msg(msg):
 
 def post_msg_on_chan(msg, chan):
     """posts msg on chan"""
-    if chan.chat_type == "IRC":
-        my_ircbot.post_msg(chan.chan_name, msg)
-    elif chan.chat_type == "Slack":
-        my_slackbot.post_msg(chan.chan_name, msg)
-    elif chan.chat_type == "MM":
-        my_mmbot.post_msg(chan.chan_name, msg)
-    else:
-        v.log(1, "While handling a message : Unknown chat type")
+    chan.chat_server.bot.post_msg(chan, msg)
 
 def broadcast(msg, twinning_index = -1):
     """Sends msg to all chan in the twinnning that has twinning_index as index,
@@ -81,43 +74,41 @@ def start():
     """starts the whole system by retrieving config.py options, creating
     the bots and launching them in a separate thread"""
 
-    #needed to change global variables
-    global twinnings
-    global my_ircbot
-    global my_slackbot
-    global my_mmbot
-
     #loading twinning table from config file
+    v.log(3, "loading servers")
+    v.log(3, c.SERVERS.__repr__())
     v.log(3, "loading twinning table")
-    v.log(3, c.TWINNINGS)
+    v.log(3, c.TWINNINGS.__repr__())
+
 
     #creating bots
-    v.log(3, "creating ircbot")
-    my_ircbot = IrcBot()
-    v.log(3, "creating slackbot")
-    my_slackbot = SlackBot()
-    v.log(3, "creating mmbot")
-    my_mmbot = MmBot()
+    for server in c.SERVERS:
+        if server.type == "IRC":
+            v.log(3, ["creating ircbot for server ", server])
+            server.bot = IrcBot(server)
+        elif server.type == "MM":
+            v.log(3, ["creating mmbot for server ", server])
+            server.bot = MmBot(server)
+        elif server.type == "Slack":
+            v.log(3, ["creating slackbot for server ", server])
+            server.bot = SlackBot(server)
 
     #preparing threads
     #we set the flag "Deamon" on each thread. The whole programm quits when
     #there is no non-deamon thread running; in our case : when the original
     #thread terminates.
-    irc_thread = threading.Thread(target=my_ircbot.start, name="irc thread")
-    irc_thread.setDaemon(True)
-    slackbot_thread = threading.Thread(target=my_slackbot.start, name="slackbot thread")
-    slackbot_thread.setDaemon(True)
-    mmbot_thread = threading.Thread(target=my_mmbot.start, name="mmbot thread")
-    mmbot_thread.setDaemon(True)
+    threads = []
+    for server in c.SERVERS:
+        cur_thread = threading.Thread(target=server.bot.start, name=server.display_name+" thread")
+        cur_thread.setDaemon(True)
+        threads.append(cur_thread)
 
     #running bots
-    v.log(3, "starting ircbot in a thread")
-    irc_thread.start()
-    v.log(3, "starting slackbot in a thread")
-    slackbot_thread.start()
-    v.log(3, "starting mmbot in a thread")
-    mmbot_thread.start()
+    v.log(3, "starting all bots in separate threads")
+    for thread in threads:
+        thread.start()
 
+    #interface
     s = ""
     while(s != "quit" and s != "exit"):
         print("======= Enter 'quit' or 'exit' anytime to quit the programm =======")

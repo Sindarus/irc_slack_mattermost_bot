@@ -42,7 +42,7 @@ class TwinningTable:
                      return i
         return -1
 
-    def get_all_chans(self, chan):
+    def get_all_chans(self):
         """returns the list of all the chans present in this twinning table. if a chan
         appears in several twinnings, it is only listed once"""
         chan_list = []
@@ -51,6 +51,14 @@ class TwinningTable:
                 if not cur_chan in chan_list:
                     chan_list.push(cur_chan)
         return chan_list
+
+    def get_chan_by_server(self, server):
+        """returns the list of the chans on the "server" chat server"""
+        chan_list = []
+        for cur_twinning in self.table:
+            for cur_chan in cur_twinning:
+                if cur_chan.chat_server == server:
+                    chan_list.push(cur_chan)
 
     def __repr__(self):
         return self.table.__repr__()

@@ -16,12 +16,13 @@ class IrcBot(ircbot.SingleServerIRCBot):
     Bot that runs in a separate thread, that deals with irc interaction
     """
 
-    def __init__(self):
+    def __init__(self, chat_server):
         v.log(3, "IRCBOT: Connecting to irc")
         self.connected = False
+        self.chat_server = chat_server
         ircbot.SingleServerIRCBot.__init__(
             self,
-            [(c.IRC_SERVER, c.IRC_PORT)],
+            [(self.chat_server.server_adress, self.chat_server.server_port)],
             c.IRCBOT_NAME,
             c.IRCBOT_LONG_NAME
         )
@@ -29,11 +30,9 @@ class IrcBot(ircbot.SingleServerIRCBot):
     def join_to_chans(self):
         """Make ircbot join all the channels that need to be monitored"""
         v.log(3, "IRCBOT: joining chans")
-        for cur_twinning in c.TWINNINGS.table:
-            for cur_chan in cur_twinning:
-                if cur_chan.chat_type == "IRC":
-                    v.log(3, "IRCBOT: joining " + cur_chan.chan_name)
-                    self.serv.join(cur_chan.chan_name)
+        for cur_chan in c.TWINNINGS.get_chan_by_server(self.chat_server):
+            v.log(3, "IRCBOT: joining " + cur_chan.chan_name)
+            self.serv.join(cur_chan.chan_name)
 
     def on_welcome(self, serv, ev):
         """
@@ -95,13 +94,11 @@ class IrcBot(ircbot.SingleServerIRCBot):
         """
 
         v.log(3, "IRCBOT: sending welcome message")
-        for cur_twinning in c.TWINNINGS.table:
-            for cur_chan in cur_twinning:
-                if cur_chan.chat_type == "IRC":
-                    self.serv.privmsg(
-                        cur_chan.chan_name,
-                        "(Twinning bot) Twinning this chan with : " + c.TWINNINGS.get_chan_twins(cur_chan).__repr__()
-                    )
+        for cur_chan in c.TWINNINGS.get_chan_by_server(self.chat_server):
+            self.serv.privmsg(
+                cur_chan.chan_name,
+                "(Twinning bot) Twinning this chan with : " + c.TWINNINGS.get_chan_twins(cur_chan).__repr__()
+            )
 
     def post_msg(self, chan_name, msg):
         """Posts a message on the channel `chan_name` on IRC. This function
