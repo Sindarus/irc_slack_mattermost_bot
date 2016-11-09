@@ -34,12 +34,12 @@ class SlackBot:
         """
 
         v.log(3, "SLACKBOT: Sending welcome msg")
-        for cur_twinning in central_unit.twinnings.table:
+        for cur_twinning in c["TWINNINGS"].table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "Slack":
                     self.client.api_call( "chat.postMessage",
                         channel=cur_chan.chan_name,
-                        text="(twinning bot) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__(),
+                        text="(twinning bot) Twinning this chan with : " + c["TWINNINGS"].get_chan_twins(cur_chan).__repr__(),
                         username="relai-irc",
                         icon_emoji=':robot_face:'
                     )

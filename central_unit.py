@@ -12,7 +12,6 @@ from irc_bot import *
 from slack_bot import *
 from mm_bot import *
 from config import cfg as c
-from config import TWINNINGS
 
 #I know using global variable is considered to be a bad habit,
 #but in this case, they are useful and simple enough to not make the program dirty.
@@ -29,7 +28,7 @@ def handle_msg(msg):
     assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(Message).__name__
 
     v.log(4, ["handling msg : ", msg.__repr__()])
-    twins = twinnings.get_chan_twins(msg.chan_orig)
+    twins = c["TWINNINGS"].get_chan_twins(msg.chan_orig)
 
     for cur_chan in twins:
         post_msg_on_chan(msg, cur_chan)
@@ -90,8 +89,7 @@ def start():
 
     #loading twinning table from config file
     v.log(3, "loading twinning table")
-    twinnings = TwinningTable(TWINNINGS)
-    v.log(3, twinnings)
+    v.log(3, c["TWINNINGS"])
 
     #creating bots
     v.log(3, "creating ircbot")

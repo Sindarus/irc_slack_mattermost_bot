@@ -29,7 +29,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
     def join_to_chans(self):
         """Make ircbot join all the channels that need to be monitored"""
         v.log(3, "IRCBOT: joining chans")
-        for cur_twinning in central_unit.twinnings.table:
+        for cur_twinning in c["TWINNINGS"].table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
                     v.log(3, "IRCBOT: joining " + cur_chan.chan_name)
@@ -95,12 +95,12 @@ class IrcBot(ircbot.SingleServerIRCBot):
         """
 
         v.log(3, "IRCBOT: sending welcome message")
-        for cur_twinning in central_unit.twinnings.table:
+        for cur_twinning in c["TWINNINGS"].table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
                     self.serv.privmsg(
                         cur_chan.chan_name,
-                        "(Twinning bot) Twinning this chan with : " + central_unit.twinnings.get_chan_twins(cur_chan).__repr__()
+                        "(Twinning bot) Twinning this chan with : " + c["TWINNINGS"].get_chan_twins(cur_chan).__repr__()
                     )
 
     def post_msg(self, chan_name, msg):
