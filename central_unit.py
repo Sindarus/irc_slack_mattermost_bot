@@ -28,7 +28,7 @@ def handle_msg(msg):
     assert isinstance(msg, Message), "msg has to be a Message object, was a " + type(Message).__name__
 
     v.log(4, ["handling msg : ", msg.__repr__()])
-    twins = c["TWINNINGS"].get_chan_twins(msg.chan_orig)
+    twins = c.TWINNINGS.get_chan_twins(msg.chan_orig)
 
     for cur_chan in twins:
         post_msg_on_chan(msg, cur_chan)
@@ -89,7 +89,7 @@ def start():
 
     #loading twinning table from config file
     v.log(3, "loading twinning table")
-    v.log(3, c["TWINNINGS"])
+    v.log(3, c.TWINNINGS)
 
     #creating bots
     v.log(3, "creating ircbot")

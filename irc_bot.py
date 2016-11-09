@@ -21,15 +21,15 @@ class IrcBot(ircbot.SingleServerIRCBot):
         self.connected = False
         ircbot.SingleServerIRCBot.__init__(
             self,
-            [(c["IRC_SERVER"], c["IRC_PORT"])],
-            c["IRCBOT_NAME"],
-            c["IRCBOT_LONG_NAME"]
+            [(c.IRC_SERVER, c.IRC_PORT)],
+            c.IRCBOT_NAME,
+            c.IRCBOT_LONG_NAME]
         )
 
     def join_to_chans(self):
         """Make ircbot join all the channels that need to be monitored"""
         v.log(3, "IRCBOT: joining chans")
-        for cur_twinning in c["TWINNINGS"].table:
+        for cur_twinning in c.TWINNINGS.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
                     v.log(3, "IRCBOT: joining " + cur_chan.chan_name)
@@ -47,7 +47,7 @@ class IrcBot(ircbot.SingleServerIRCBot):
 
         self.join_to_chans()
 
-        if c["WELCOME_MESSAGES"]:
+        if c.WELCOME_MESSAGES:
             self.send_welcome_msg()
 
     def on_pubmsg(self, serv, ev):
@@ -95,12 +95,12 @@ class IrcBot(ircbot.SingleServerIRCBot):
         """
 
         v.log(3, "IRCBOT: sending welcome message")
-        for cur_twinning in c["TWINNINGS"].table:
+        for cur_twinning in c.TWINNINGS.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "IRC":
                     self.serv.privmsg(
                         cur_chan.chan_name,
-                        "(Twinning bot) Twinning this chan with : " + c["TWINNINGS"].get_chan_twins(cur_chan).__repr__()
+                        "(Twinning bot) Twinning this chan with : " + c.TWINNINGS.get_chan_twins(cur_chan).__repr__()
                     )
 
     def post_msg(self, chan_name, msg):

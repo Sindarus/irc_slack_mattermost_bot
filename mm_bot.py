@@ -24,7 +24,7 @@ class MmBot:
         webserver_thread = threading.Thread(target=web_server.start, name="webserver thread")
         webserver_thread.setDaemon(True)
         webserver_thread.start()
-        if c["WELCOME_MESSAGES"]:
+        if c.WELCOME_MESSAGES:
             self.send_welcome_msg()
 
     def send_welcome_msg(self):
@@ -32,10 +32,10 @@ class MmBot:
         one. The message tells with what other channels the said channel is
         twinned with."""
         v.log(3, "MMBOT: Sending welcome msg")
-        for cur_twinning in c["TWINNINGS"].table:
+        for cur_twinning in c.TWINNINGS.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_type == "MM":
-                    msg = "(twinning bot) Twinning this chan with : " + str(c["TWINNINGS"].get_chan_twins(cur_chan))
+                    msg = "(twinning bot) Twinning this chan with : " + str(c.TWINNINGS.get_chan_twins(cur_chan))
                     self.__send_request({"channel": cur_chan.chan_name, "text": msg})
 
     def receive_msg(self, msg):
@@ -66,7 +66,7 @@ class MmBot:
         request = 'payload=' + payload
 
         try:
-            res = urllib2.urlopen(c["MMBOT_INHOOK_URL"], request)
+            res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
         except Exception, e:
             v.log(1, ["Tried posting to MM but got error : ", e, "\nRequest sent was : ", request])
             return

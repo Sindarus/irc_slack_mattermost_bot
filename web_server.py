@@ -19,7 +19,7 @@ def start():
     """Starts the webserver"""
     for i in range(5):
         try:
-            web.httpserver.runsimple(app.wsgifunc(), (c["MMBOT_BINDING_IP"], c["MMBOT_BINDING_PORT"]))
+            web.httpserver.runsimple(app.wsgifunc(), (c.MMBOT_BINDING_IP, c.MMBOT_BINDING_PORT))
             v.log(3, "Successfully launched webserver.")
             return
         except Exception, e:
@@ -42,9 +42,9 @@ class HandleMsgAction:
         """Method called when there is a POST request on handle_msg"""
         v.log(3, "WEBSERVER: received a post request")
         input = web.input()
-        if input.token not in c["MMBOT_OUTHOOK_TOKEN"]:
+        if input.token not in c.MMBOT_OUTHOOK_TOKEN:
             v.log(1, "WEBSERVER received a post request but the token was wrong. Ignoring request.")
-            v.log(1, "token was : " + input.token + " expecting : " + c["MMBOT_OUTHOOK_TOKEN"].__repr__())
+            v.log(1, "token was : " + input.token + " expecting : " + c.MMBOT_OUTHOOK_TOKEN.__repr__())
             return
 
         try:
