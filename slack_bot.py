@@ -166,7 +166,7 @@ class SlackBot:
 
             # transfering to central unit
             central_unit.handle_msg(Message(
-                chan_orig = Chan("Slack", channel),
+                chan_orig = Chan(self.chat_server, channel),
                 author = user,
                 msg = msg)
             )

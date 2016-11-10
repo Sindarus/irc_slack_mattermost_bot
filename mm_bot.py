@@ -64,7 +64,7 @@ class MmBot:
         request = 'payload=' + payload
 
         try:
-            res = urllib2.urlopen(c.MMBOT_INHOOK_URL, request)
+            res = urllib2.urlopen(self.chat_server.inhook_url, request)
         except Exception, e:
             v.log(1, ["Tried posting to MM but got error : ", e, "\nRequest sent was : ", request])
             return

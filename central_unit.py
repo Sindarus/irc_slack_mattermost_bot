@@ -37,17 +37,17 @@ def handle_msg(msg):
 
 def post_msg_on_chan(msg, chan):
     """posts msg on chan"""
-    chan.chat_server.bot.post_msg(chan, msg)
+    chan.chat_server.bot.post_msg(chan.chan_name, msg)
 
 def broadcast(msg, twinning_index = -1):
     """Sends msg to all chan in the twinnning that has twinning_index as index,
     if twinning_index is left unset (it is optional), the msg is sent to ALL chans that
     appear in the twinning table"""
     if twinning_index == -1:
-	for chan in twinnings.get_all_chans():
+	for chan in c.TWINNINGS.get_all_chans():
             post_msg_on_chan(msg, chan)
     else:
-        for chan in twinnings.table[twinning_index]:
+        for chan in c.TWINNINGS.table[twinning_index]:
             post_msg_on_chan(msg, chan)
 
 def do_commands(in_msg):
@@ -59,12 +59,12 @@ def do_commands(in_msg):
         elif(in_msg.msg == "!twinning_bot isup"):
             text = "Twinning bot is UP."
         elif(in_msg.msg == "!twinning_bot current_twinnings"):
-            text = "Current twinnings are : " + str(twinnings.table)
+            text = "Current twinnings are : " + str(c.TWINNINGS.table)
         else:
             text = "Unknown command. See !twinning_bot help."
 
         msg = Message(in_msg.chan_orig, "Twinning bot", text)
-        twinning_index = twinnings.get_twinning_index(in_msg.chan_orig)
+        twinning_index = c.TWINNINGS.get_twinning_index(in_msg.chan_orig)
         if(twinning_index != -1): # if chan_orig was found in the twinning table
             broadcast(msg, twinning_index)
         else:
@@ -78,6 +78,7 @@ def start():
     v.log(3, "loading servers")
     v.log(3, c.SERVERS.__repr__())
     v.log(3, "loading twinning table")
+    c.TWINNINGS = TwinningTable(c.TWINNINGS)
     v.log(3, c.TWINNINGS.__repr__())
 
 

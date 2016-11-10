@@ -4,6 +4,7 @@
 from copy import *
 
 from chan import *
+import verbose as v
 
 class TwinningTable:
     """singleton class that stores what chans to link with eachother"""
@@ -27,7 +28,7 @@ class TwinningTable:
         for cur_twinning in self.table:
             for i, cur_chan in enumerate(cur_twinning):
                 if cur_chan == chan:
-                    ret = deepcopy(cur_twinning)
+                    ret = copy(cur_twinning)
                     ret.pop(i)
                     return ret
 
@@ -49,7 +50,7 @@ class TwinningTable:
         for cur_twinning in self.table:
             for cur_chan in cur_twinning:
                 if not cur_chan in chan_list:
-                    chan_list.push(cur_chan)
+                    chan_list.append(cur_chan)
         return chan_list
 
     def get_chan_by_server(self, server):
@@ -58,7 +59,8 @@ class TwinningTable:
         for cur_twinning in self.table:
             for cur_chan in cur_twinning:
                 if cur_chan.chat_server == server:
-                    chan_list.push(cur_chan)
+                    chan_list.append(cur_chan)
+	return chan_list
 
     def __repr__(self):
         return self.table.__repr__()
